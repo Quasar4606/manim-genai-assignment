@@ -28,7 +28,6 @@ The assignment consists of two tasks:
 ├── fourier_series.py
 ├── README.md
 ├── .gitignore
-└── .env
 ```
 
 ---
