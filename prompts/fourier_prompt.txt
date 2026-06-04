@@ -1,0 +1,29 @@
+Create a Manim Scene called FourierSeriesDecomposition.
+
+The code must be compatible with Manim Community Edition v0.20+.
+
+Create an educational animation that explains how a Fourier series approximates a square wave.
+
+Requirements:
+
+- Begin by showing a target square wave.
+- Introduce the concept that complex periodic functions can be represented as sums of sine waves.
+- Show the first Fourier term.
+- Progressively add higher odd harmonics.
+- After each harmonic is added, update the approximation curve.
+- Visually demonstrate convergence toward the square wave.
+- Include explanatory text describing what is happening.
+- Clearly indicate which harmonic is being added.
+- Show the mathematical expression of the current approximation using Text() only.
+- Use smooth animations and appropriate wait() calls.
+- Keep all graphs and text visible within the frame.
+
+The animation should focus on understanding the Fourier series process rather than only displaying the final result.
+
+Implementation requirements:
+
+- Use Axes and axes.plot().
+- Do not use deprecated Manim methods.
+- Use only Text() for text.
+- Generate exactly one Scene class.
+- Return only runnable Python code.
