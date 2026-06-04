@@ -19,7 +19,7 @@ def ask_ai_for_manim_code(user_prompt):
     
     full_prompt = f"{system_instruction}\n\nUser Request: {user_prompt}"
 
-    print("Sending prompt to Gemini, please wait...")
+    print("\nSending prompt to Gemini, please wait...")
 
     response = client.models.generate_content(
         model = 'gemini-2.5-flash',
@@ -42,13 +42,23 @@ if __name__ == "__main__":
     print("Type your idea, or type 'quit' to exit.")
     print("="*50)
     while True:
-        user_request = input("\nEnter your animation idea: ")
-        if user_request.lower() in ["quit","exit"]:
+        prompt_file = input("\nEnter prompt file path: ").strip()
+        if prompt_file.lower() in ["quit", "exit"]:
             print("Shutting down. Goodbye!")
             break
+        try:
+            with open(prompt_file, "r") as f:
+                user_request = f.read()
+        except FileNotFoundError:
+            print("Prompt file not found.")
+            continue
         if(user_request.strip() == ""):
             continue
-        result = ask_ai_for_manim_code(user_request)
+        try:
+            result = ask_ai_for_manim_code(user_request)
+        except Exception as e:
+            print(f"\nGemini error: {e}")
+            continue
         cleaned_code = extract_python_code(result)
         while True:
             filename = input("\nEnter filename (without .py): ").strip()

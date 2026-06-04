@@ -1,0 +1,8 @@
+Create a Manim Scene called PythagoreanTheorem.
+Create a visual proof of the Pythagorean theorem.
+Use a right triangle with squares on all three sides.
+Demonstrate geometrically why the area of the square on the hypotenuse equals the sum of the areas of the other two squares.
+Use clear animations and explanatory text.
+Keep all objects visible.
+Use only Text() for text.
+Return only runnable Python code containing one Scene class.
