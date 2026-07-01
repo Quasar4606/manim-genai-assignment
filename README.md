@@ -1,338 +1,275 @@
-# Manim AI Animation Generation and Critical Evaluation
+# Manim AI Animation Generator
 
 ## Overview
 
-This project explores the use of Google's Gemini API to automatically generate Manim animations for mathematical concepts. The objective is to evaluate the quality of AI-generated animation code, identify its strengths and weaknesses, and critically assess the resulting visualizations.
+This project generates Manim animations from natural language prompts using Google's Gemini API.
 
-The assignment consists of two tasks:
+The workflow is:
 
-1. Visual Proof of the Pythagorean Theorem
-2. Fourier Series Decomposition Visualization
+1. Accept a text prompt.
+2. Send the prompt to Gemini.
+3. Generate valid Manim Python code.
+4. Extract the generated code.
+5. Save it as a Python file.
+6. Render it using Manim.
+7. Serve the generated video through a FastAPI backend.
+
+The repository also contains the analysis reports completed as part of the earlier assignments.
 
 ---
 
-## Repository Structure
+## Project Structure
 
 ```text
 .
 ├── prompts/
 │   ├── pythagoras_prompt.txt
-│   └── fourier_prompt.txt
+│   ├── fourier_prompt.txt
+│   └── ...
 │
-├── videos/
-│   ├── PythagoreanTheorem.mp4
-│   └── FourierSeriesDecomposition.mp4
+├── media/
+│   └── videos/
 │
 ├── generate_scene.py
-├── pythagoras.py
-├── fourier_series.py
+├── main.py
+├── requirements.txt
+├── .env.example
 ├── README.md
-├── .gitignore
+├── Week1_Task_Analysis.md
+├── Week2_Task2.md
+└── .gitignore
 ```
 
 ---
 
-## Setup Instructions
+## Assignment Reports
 
-### macOS / Linux
+- **Week1_Task_Analysis.md** – Critical evaluation of the AI-generated Pythagorean Theorem and Fourier Series animations.
+- **Week2_Task2.md** – Project Feedback and Suggestions.
 
-Create a virtual environment:
+---
+
+## Requirements
+
+- Python 3.10+
+- Manim Community Edition
+- FFmpeg
+- Google Gemini API key
+
+---
+
+## Installation
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Quasar4606/manim-genai-assignment.git
+cd manim-genai-assignment
+```
+
+### 2. Create a virtual environment
+
+#### macOS / Linux
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Create a `.env` file:
-
-```text
-GEMINI_API_KEY=YOUR_API_KEY_HERE
-```
-
----
-
-### Windows
-
-Create a virtual environment:
+#### Windows
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
-Install dependencies:
+### 3. Install dependencies
 
-```powershell
+```bash
 pip install -r requirements.txt
 ```
 
-Create a `.env` file:
+### 4. Create a `.env` file
 
 ```text
 GEMINI_API_KEY=YOUR_API_KEY_HERE
 ```
 
+A sample `.env.example` file is included in the repository.
+
 ---
 
-## Running the Generator
+# Running the Generator (CLI)
 
-Generate Manim code from a prompt file:
+Run
 
 ```bash
 python3 generate_scene.py
 ```
 
-The program will:
+The program will ask for:
 
-1. Read a prompt file.
-2. Send the prompt to Gemini.
-3. Generate Manim code.
-4. Save the generated code to a Python file.
+- Prompt file path
+- Output filename
+
+Example
+
+```text
+Enter prompt file path:
+prompts/circle.txt
+
+Enter filename:
+circle
+```
+
+The generator will:
+
+1. Read the prompt file.
+2. Generate Manim code using Gemini.
+3. Save the generated Python file.
+4. Render the animation using Manim.
+5. Print the path of the generated video.
+
+The generated video is saved under:
+
+```text
+media/videos/
+```
 
 ---
 
-# Question 1 – Visual Proof of the Pythagorean Theorem
+# Running the FastAPI Backend
 
-## Prompt Used
+Start the backend using either of the following methods.
 
-Located in:
-
-```text
-prompts/pythagoras_prompt.txt
-```
-
-## Running the Scene
-
-### macOS / Linux
+### Method 1 (Recommended)
 
 ```bash
-manim -pql pythagoras.py PythagoreanTheorem
+python3 main.py
 ```
 
-### Windows
-
-```powershell
-manim -pql pythagoras.py PythagoreanTheorem
-```
-
-## Output
-
-Output video:
-
-```text
-videos/PythagoreanTheorem.mp4
-```
-
----
-
-## Critical Analysis: Pythagorean Theorem Animation
-
-### 1. Inward-Facing Hypotenuse Square (Geometric Overlap)
-
-**Issue**
-
-At the 0:08 mark, the square representing the area of the hypotenuse (c²) is drawn facing the wrong direction. Instead of building outward, it projects inward, heavily overlapping the original right-angled triangle.
-
-**Impact**
-
-This obscures the base shape and creates a confusing visual right at the start of the proof.
-
-**Corrective Action**
-
-The green hypotenuse square should be constructed outward and away from the triangle.
-
----
-
-### 2. Floating and Detached Hypotenuse Label
-
-**Issue**
-
-The label "c" appears far away from the hypotenuse and remains visible at the end of the animation after the diagram disappears.
-
-**Impact**
-
-This weakens the visual connection between the label and the side it represents and makes the ending appear unfinished.
-
-**Corrective Action**
-
-Anchor the label near the midpoint of the hypotenuse and fade it out with the rest of the diagram.
-
----
-
-### 3. Severe Text-on-Diagram Overlap
-
-**Issue**
-
-The algebraic derivation eventually overlaps the geometric proof diagram.
-
-**Impact**
-
-The animation becomes cluttered and difficult to follow.
-
-**Corrective Action**
-
-Use a split-screen layout with geometry on one side and equations on the other.
-
----
-
-### 4. Loss of Mathematical Abstraction
-
-**Issue**
-
-The proof substitutes specific values (3 and 4) despite claiming the result applies to all right triangles.
-
-**Impact**
-
-The proof becomes a numerical demonstration rather than a general proof.
-
-**Corrective Action**
-
-Maintain symbolic variables throughout the derivation.
-
----
-
-### 5. Poor Typographic Formatting for Mathematics
-
-**Issue**
-
-All equations are displayed using plain text.
-
-**Impact**
-
-The mathematical notation appears less polished than professionally typeset mathematics.
-
-**Corrective Action**
-
-Use mathematical typesetting where assignment requirements permit.
-
----
-
-# Question 2 – Fourier Series Decomposition
-
-## Prompt Used
-
-Located in:
-
-```text
-prompts/fourier_prompt.txt
-```
-
-## Running the Scene
-
-### macOS / Linux
+### Method 2
 
 ```bash
-manim -pql fourier_series.py FourierSeriesDecomposition
+uvicorn main:app --reload
 ```
 
-### Windows
-
-```powershell
-manim -pql fourier_series.py FourierSeriesDecomposition
-```
-
-## Output
-
-Output video:
+Once the server starts, open
 
 ```text
-videos/FourierSeriesDecomposition.mp4
+http://127.0.0.1:8000/docs
+```
+
+to access the interactive Swagger UI.
+
+---
+
+# API
+
+## POST `/generate`
+
+Generates and renders a Manim animation.
+
+### Request
+
+```json
+{
+    "prompt": "Draw a blue circle.",
+    "filename": "circle"
+}
+```
+
+The `filename` field specifies the name of the generated Python file and the corresponding Manim output directory.
+
+### Response
+
+```json
+{
+    "video_url": "/media/videos/circle/480p15/BlueCircle.mp4"
+}
+```
+
+The returned URL can be opened directly in a browser while the server is running.
+
+---
+
+# Workflow
+
+```text
+Prompt
+   │
+   ▼
+Gemini API
+   │
+   ▼
+Generate Manim Code
+   │
+   ▼
+Extract Python Code
+   │
+   ▼
+Save Python File
+   │
+   ▼
+Extract Scene Class
+   │
+   ▼
+Render Animation (Manim)
+   │
+   ▼
+Generate MP4
+   │
+   ▼
+Serve Video through FastAPI
 ```
 
 ---
 
-## Critical Analysis: Fourier Series Decomposition
+# Features
 
-### 1. Missing Individual Harmonics (Instruction Failure)
-
-**Issue**
-
-The animation only displays the target square wave and the cumulative Fourier approximation. Individual harmonics are never shown independently.
-
-**Impact**
-
-The viewer cannot observe the individual building blocks that create the approximation, reducing educational value.
-
-**Corrective Action**
-
-Display each harmonic separately in a unique colour before adding it to the cumulative approximation.
+- Natural language to Manim animation generation
+- Prompt engineering for reliable code generation
+- Automatic extraction of Python code from LLM responses
+- Automatic Scene class detection
+- Automatic Manim rendering
+- FastAPI backend
+- Static file serving
+- CORS enabled
+- Interactive Swagger documentation
+- Error handling for common failure cases
 
 ---
 
-### 2. Slanted Target Square Wave (Geometric Inaccuracy)
+# Error Handling
 
-**Issue**
+The project handles:
 
-The target square wave is rendered with slanted transitions instead of perfectly vertical discontinuities.
+- Missing Gemini API key
+- Empty prompts
+- Empty Gemini responses
+- Missing Scene class
+- Manim rendering failures
+- Missing output video
 
-**Impact**
-
-This incorrectly suggests continuity and misrepresents the true mathematical structure of a square wave.
-
-**Corrective Action**
-
-Construct the square wave using explicit horizontal and vertical line segments.
-
----
-
-### 3. Poor Typographic Formatting of Equations
-
-**Issue**
-
-The displayed Fourier expressions are rendered as plain text strings.
-
-**Impact**
-
-The equations appear closer to source code than formal mathematical notation.
-
-**Corrective Action**
-
-Use proper mathematical typesetting when allowed.
+Errors are returned through FastAPI using appropriate `HTTPException` responses.
 
 ---
 
-### 4. Garbled Text Transitions (Visual Glitching)
+# Technologies Used
 
-**Issue**
-
-Several text transformations cause letters to stretch and overlap during transitions.
-
-**Impact**
-
-The animation appears visually unpolished and distracts from the mathematical content.
-
-**Corrective Action**
-
-Replace direct text transformations with fade transitions.
+- Python
+- FastAPI
+- Google Gemini API
+- Manim Community Edition
+- Pydantic
+- python-dotenv
+- Uvicorn
 
 ---
 
-### 5. Incorrect Ordinal Suffixes (Grammar Error)
+# Notes
 
-**Issue**
-
-Labels such as "1th Harmonic" and "3th Harmonic" are displayed.
-
-**Impact**
-
-These grammatical errors reduce the professional quality of the animation.
-
-**Corrective Action**
-
-Implement proper ordinal suffix logic (1st, 2nd, 3rd, etc.).
-
----
-
-## Overall Findings
-
-This project demonstrated both the strengths and limitations of AI-generated code.
-
-Gemini was able to generate complete Manim scenes with minimal human intervention and successfully capture the underlying mathematical concepts. However, the generated animations contained several implementation, layout, formatting, and presentation issues that required critical review.
-
-The experiments showed that prompt engineering significantly influences output quality, but human verification remains necessary to ensure correctness, readability, and educational effectiveness.
+- `uvicorn main:app --reload` should only be used during development.
+- The `.env` file is intentionally excluded from version control.
+- Generated videos are served through FastAPI using `StaticFiles`.
+- Do not commit your API key; only commit `.env.example`.
