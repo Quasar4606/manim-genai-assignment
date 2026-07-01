@@ -2,6 +2,7 @@ import os
 import re
 from dotenv import load_dotenv
 from google import genai
+import subprocess
 
 load_dotenv()
 
@@ -40,6 +41,13 @@ def extract_python_code(raw_text):
         return match.group(1).strip()
     return raw_text.strip()
 
+def extract_scene_name(code : str)->str:
+    pattern = r"class\s+(\w+)\(Scene\)"
+    match = re.search(pattern,code)
+    if not match:
+        raise RuntimeError("No Scene class found.")
+    return match.group(1)
+
 def generate_animation_video(prompt : str,filename : str = "generated_scene") -> str:
     if prompt.strip() == "":
         raise ValueError("Prompt cannot be empty.")
@@ -47,10 +55,32 @@ def generate_animation_video(prompt : str,filename : str = "generated_scene") ->
         raw_response = ask_ai_for_manim_code(prompt)
         cleaned_code = extract_python_code(raw_response)
         output_filename = f"{filename}.py"
+        scene_name = extract_scene_name(cleaned_code)
+        print(f"Detected Scene : {scene_name}")
         with open(output_filename, "w") as f:
             f.write(cleaned_code)
         print(f"Generated code saved to {output_filename}")
-        return output_filename
+        subprocess.run(
+            [
+                "manim",
+                "-pql",
+                output_filename,
+                scene_name,
+            ],
+            check = True,
+            capture_output=True,
+            text=True,
+        )
+        video_path = os.path.join(
+            "media",
+            "videos",
+            filename,
+            "480p15",
+            f"{scene_name}.mp4"
+        )
+        if not os.path.exists(video_path):
+            raise RuntimeError("Video generation failed.")
+        return video_path
     except Exception as e:
         raise RuntimeError(f"Animation generation failed: {e}")
 
@@ -78,7 +108,7 @@ if __name__ == "__main__":
                 break
             print("Filename cannot be empty.")
         try:
-            generated_file = generate_animation_video(user_request,filename)
-            print(f"Success! Saved as -> {generated_file}")
+            video_path = generate_animation_video(user_request,filename)
+            print(f"Success! Saved at -> {video_path}")
         except Exception as e:
             print(e)
