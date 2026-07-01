@@ -112,7 +112,7 @@ if __name__ == "__main__":
             continue
         while True:
             filename = input("\nEnter filename (without .py): ").strip()
-            if filename != "":
+            if filename.strip():
                 break
             print("Filename cannot be empty.")
         try:
