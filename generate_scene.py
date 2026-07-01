@@ -5,7 +5,11 @@ from google import genai
 
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv('GEMINI_API_KEY'))
+api_key = os.getenv("GEMINI_API_KEY")
+if api_key is None:
+    raise RuntimeError("GEMINI_API_KEY not found in .env")
+
+client = genai.Client(api_key = api_key)
 
 def ask_ai_for_manim_code(user_prompt):
     system_instruction = (
@@ -36,10 +40,24 @@ def extract_python_code(raw_text):
         return match.group(1).strip()
     return raw_text.strip()
 
+def generate_animation_video(prompt : str,filename : str = "generated_scene") -> str:
+    if prompt.strip() == "":
+        raise ValueError("Prompt cannot be empty.")
+    try:
+        raw_response = ask_ai_for_manim_code(prompt)
+        cleaned_code = extract_python_code(raw_response)
+        output_filename = f"{filename}.py"
+        with open(output_filename, "w") as f:
+            f.write(cleaned_code)
+        print(f"Generated code saved to {output_filename}")
+        return output_filename
+    except Exception as e:
+        raise RuntimeError(f"Animation generation failed: {e}")
+
 if __name__ == "__main__":
     print("\n" + "="*50)
     print("Welcome to the AI Animation Generator!")
-    print("Type your idea, or type 'quit' to exit.")
+    print("Enter a prompt file path, or type 'quit' to exit.")
     print("="*50)
     while True:
         prompt_file = input("\nEnter prompt file path: ").strip()
@@ -54,18 +72,13 @@ if __name__ == "__main__":
             continue
         if(user_request.strip() == ""):
             continue
-        try:
-            result = ask_ai_for_manim_code(user_request)
-        except Exception as e:
-            print(f"\nGemini error: {e}")
-            continue
-        cleaned_code = extract_python_code(result)
         while True:
             filename = input("\nEnter filename (without .py): ").strip()
             if filename != "":
                 break
             print("Filename cannot be empty.")
-        output_filename = f"{filename}.py"
-        with open(output_filename,"w") as f:
-            f.write(cleaned_code)
-        print(f"Success! Saved as -> {output_filename}")
+        try:
+            generated_file = generate_animation_video(user_request,filename)
+            print(f"Success! Saved as -> {generated_file}")
+        except Exception as e:
+            print(e)
