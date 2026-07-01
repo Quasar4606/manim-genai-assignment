@@ -49,10 +49,12 @@ def extract_scene_name(code : str)->str:
     return match.group(1)
 
 def generate_animation_video(prompt : str,filename : str = "generated_scene") -> str:
-    if prompt.strip() == "":
+    if not prompt.strip():
         raise ValueError("Prompt cannot be empty.")
     try:
         raw_response = ask_ai_for_manim_code(prompt)
+        if not raw_response.strip():
+            raise RuntimeError("Gemini returned an empty response.")
         cleaned_code = extract_python_code(raw_response)
         output_filename = f"{filename}.py"
         scene_name = extract_scene_name(cleaned_code)
@@ -81,6 +83,12 @@ def generate_animation_video(prompt : str,filename : str = "generated_scene") ->
         if not os.path.exists(video_path):
             raise RuntimeError("Video generation failed.")
         return video_path
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(
+            f"Manim rendering failed:\n{e.stderr}"
+        )
+    except RuntimeError:
+        raise
     except Exception as e:
         raise RuntimeError(f"Animation generation failed: {e}")
 
@@ -100,7 +108,7 @@ if __name__ == "__main__":
         except FileNotFoundError:
             print("Prompt file not found.")
             continue
-        if(user_request.strip() == ""):
+        if not user_request.strip():
             continue
         while True:
             filename = input("\nEnter filename (without .py): ").strip()
