@@ -65,7 +65,7 @@ def generate_animation_video(prompt : str,filename : str = "generated_scene") ->
         subprocess.run(
             [
                 "manim",
-                "-pql",
+                "-ql",
                 output_filename,
                 scene_name,
             ],
