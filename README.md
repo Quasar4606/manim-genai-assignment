@@ -4,6 +4,11 @@
 
 This project generates Manim animations from natural language prompts using Google's Gemini API.
 
+The project provides both:
+
+- A command-line interface (CLI) for generating animations from prompt files.
+- A web interface built with FastAPI and JavaScript that allows users to generate and play animations directly from their browser.
+
 The workflow is:
 
 1. Accept a text prompt.
@@ -13,15 +18,21 @@ The workflow is:
 5. Save it as a Python file.
 6. Render it using Manim.
 7. Serve the generated video through a FastAPI backend.
+8. Display the generated video in the frontend.
 
 The repository also contains the analysis reports completed as part of the earlier assignments.
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```text
 .
+├── frontend/
+│   ├── index.html
+│   ├── script.js
+│   └── README.md
+│
 ├── prompts/
 │   ├── pythagoras_prompt.txt
 │   ├── fourier_prompt.txt
@@ -42,14 +53,14 @@ The repository also contains the analysis reports completed as part of the earli
 
 ---
 
-## Assignment Reports
+# Assignment Reports
 
 - **Week1_Task_Analysis.md** – Critical evaluation of the AI-generated Pythagorean Theorem and Fourier Series animations.
-- **Week2_Task2.md** – Project Feedback and Suggestions.
+- **Week2_Task2.md** – Feedback and suggestions for improving the project.
 
 ---
 
-## Requirements
+# Requirements
 
 - Python 3.10+
 - Manim Community Edition
@@ -58,38 +69,38 @@ The repository also contains the analysis reports completed as part of the earli
 
 ---
 
-## Installation
+# Installation
 
-### 1. Clone the repository
+## 1. Clone the repository
 
 ```bash
 git clone https://github.com/Quasar4606/manim-genai-assignment.git
 cd manim-genai-assignment
 ```
 
-### 2. Create a virtual environment
+## 2. Create a virtual environment
 
-#### macOS / Linux
+### macOS / Linux
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-#### Windows
+### Windows
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\activate
 ```
 
-### 3. Install dependencies
+## 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Create a `.env` file
+## 4. Create a `.env` file
 
 ```text
 GEMINI_API_KEY=YOUR_API_KEY_HERE
@@ -128,9 +139,9 @@ The generator will:
 2. Generate Manim code using Gemini.
 3. Save the generated Python file.
 4. Render the animation using Manim.
-5. Print the path of the generated video.
+5. Print the location of the generated video.
 
-The generated video is saved under:
+Generated videos are stored under:
 
 ```text
 media/videos/
@@ -142,13 +153,13 @@ media/videos/
 
 Start the backend using either of the following methods.
 
-### Method 1 (Recommended)
+## Method 1
 
 ```bash
 python3 main.py
 ```
 
-### Method 2
+## Method 2
 
 ```bash
 uvicorn main:app --reload
@@ -161,6 +172,30 @@ http://127.0.0.1:8000/docs
 ```
 
 to access the interactive Swagger UI.
+
+---
+
+# Running the Frontend
+
+Navigate to the frontend directory:
+
+```bash
+cd frontend
+```
+
+Start a simple HTTP server:
+
+```bash
+python3 -m http.server 5500
+```
+
+Open the frontend in your browser:
+
+```text
+http://localhost:5500
+```
+
+Ensure the FastAPI backend is already running before generating animations.
 
 ---
 
@@ -189,38 +224,41 @@ The `filename` field specifies the name of the generated Python file and the cor
 }
 ```
 
-The returned URL can be opened directly in a browser while the server is running.
+The returned URL can be opened directly while the backend is running.
 
 ---
 
 # Workflow
 
 ```text
-Prompt
-   │
-   ▼
-Gemini API
-   │
-   ▼
-Generate Manim Code
-   │
-   ▼
-Extract Python Code
-   │
-   ▼
-Save Python File
-   │
-   ▼
-Extract Scene Class
-   │
-   ▼
-Render Animation (Manim)
-   │
-   ▼
-Generate MP4
-   │
-   ▼
-Serve Video through FastAPI
+              Prompt
+                 │
+                 ▼
+            Gemini API
+                 │
+                 ▼
+      Generate Manim Code
+                 │
+                 ▼
+      Extract Python Code
+                 │
+                 ▼
+        Save Python File
+                 │
+                 ▼
+      Extract Scene Class
+                 │
+                 ▼
+     Render Animation (Manim)
+                 │
+                 ▼
+           Generate MP4
+                 │
+                 ▼
+      FastAPI Static Server
+                 │
+                 ▼
+     Frontend Video Player
 ```
 
 ---
@@ -228,14 +266,15 @@ Serve Video through FastAPI
 # Features
 
 - Natural language to Manim animation generation
-- Prompt engineering for reliable code generation
-- Automatic extraction of Python code from LLM responses
+- Prompt engineering for reliable Manim code generation
+- Automatic extraction of Python code from Gemini responses
 - Automatic Scene class detection
 - Automatic Manim rendering
 - FastAPI backend
-- Static file serving
-- CORS enabled
+- JavaScript frontend
+- Static video serving
 - Interactive Swagger documentation
+- CORS enabled
 - Error handling for common failure cases
 
 ---
@@ -247,17 +286,20 @@ The project handles:
 - Missing Gemini API key
 - Empty prompts
 - Empty Gemini responses
-- Missing Scene class
+- Missing Scene classes
 - Manim rendering failures
-- Missing output video
+- Missing output videos
+- Backend connection failures in the frontend
 
-Errors are returned through FastAPI using appropriate `HTTPException` responses.
+Errors are returned through FastAPI using appropriate `HTTPException` responses and are displayed in the frontend.
 
 ---
 
 # Technologies Used
 
 - Python
+- JavaScript
+- HTML
 - FastAPI
 - Google Gemini API
 - Manim Community Edition
@@ -272,4 +314,4 @@ Errors are returned through FastAPI using appropriate `HTTPException` responses.
 - `uvicorn main:app --reload` should only be used during development.
 - The `.env` file is intentionally excluded from version control.
 - Generated videos are served through FastAPI using `StaticFiles`.
-- Do not commit your API key; only commit `.env.example`.
+- Do not commit your API key. Commit only `.env.example`.
